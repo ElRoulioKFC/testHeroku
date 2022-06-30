@@ -1,0 +1,60 @@
+<html>
+    <head>
+       <title>Compteur</title>
+    </head>
+    <body>
+
+        <button id="left"> < </button>
+        <button id="right"> > </button>
+
+        <div id="nom"></div>
+        <div id="prix"></div>
+        <div id="quant"></div>
+
+        <button id="plus"> + </button>
+        <button id="minus"> - </button>
+
+        <div id="panier"></div>
+        <div id="total"></div>
+
+
+       <script src="/socket.io/socket.io.js"></script>
+
+	   <script>
+        	var socket = io();
+
+          document.getElementById('left').onclick = function() {
+            socket.emit('left');
+        	};
+
+          document.getElementById('right').onclick = function() {
+            socket.emit('right');
+        	};
+          document.getElementById('plus').onclick = function() {
+            socket.emit('plus');
+          };
+          document.getElementById('minus').onclick = function() {
+            socket.emit('minus');
+          };
+
+
+          socket.on('total', function (msg) {
+            document.getElementById('total').innerText = msg;
+          });
+
+          socket.on('panier', function (msg) {
+            document.getElementById('panier').innerText = msg;
+          });
+
+          socket.on('name', function (msg) {
+        		document.getElementById('nom').innerText = msg;
+        	});
+          socket.on('prix', function (msg) {
+            document.getElementById('prix').innerText = msg + ' €';
+          });
+          socket.on('quant', function (msg) {
+            document.getElementById('quant').innerText = msg + ' g';
+          });
+		</script>
+    </body>
+</html>
