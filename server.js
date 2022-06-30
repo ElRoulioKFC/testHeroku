@@ -17,7 +17,7 @@ app.get('/', function(req, res){
 	res.sendFile(__dirname + '/session2.html');
 });
 
-http.listen(8080,function(){
+http.listen(80,function(){
 	console.log('serveur en écoute sur le port 8080');
 });
 
