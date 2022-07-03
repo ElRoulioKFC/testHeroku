@@ -1,16 +1,28 @@
 {
-  "produit":[
-    {"name": "pâtes",
-    "prix": 2,
-    "quant": 500},
-    {"name": "pesto",
-    "prix": 4,
-    "quant": 80},
-    {"name": "bolo",
-    "prix": 1,
-    "quant": 50},
-    {"name": "arabiata",
-    "prix": 8,
-    "quant": 800}
+  "produit": [
+    {
+      "name": "pâtes",
+      "prix": 2,
+      "quant": 500,
+      "stock": 711
+    },
+    {
+      "name": "pesto",
+      "prix": 4,
+      "quant": 80,
+      "stock": 821
+    },
+    {
+      "name": "bolo",
+      "prix": 1,
+      "quant": 50,
+      "stock": 840
+    },
+    {
+      "name": "arabiata",
+      "prix": 8,
+      "quant": 800,
+      "stock": 848
+    }
   ]
 }

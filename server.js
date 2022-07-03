@@ -28,9 +28,11 @@ io.on('connect', function(socket){
 		io.emit('name', data[0]);
 		io.emit('prix', data[1]);
 		io.emit('quant', data[2]);
+		io.emit('stock', (data[3]));
+
 
 	socket.on('minus', function () {
-		addProduct(compteur,commande,jso);
+		removeProduct(compteur,commande,jso);
 		io.emit('panier',getPanier(commande,jso));
 		io.emit('total',totalCost(commande,jso));
 	});
@@ -52,6 +54,8 @@ io.on('connect', function(socket){
 		io.emit('name', (data[0]));
 		io.emit('prix', (data[1]));
 		io.emit('quant', (data[2]));
+		io.emit('stock', (data[3]));
+
 	});
 	socket.on('right', function () {
 		compteur = changeCompteur(1,compteur,jso);
@@ -59,7 +63,23 @@ io.on('connect', function(socket){
 		io.emit('name', (data[0]));
 		io.emit('prix', (data[1]));
 		io.emit('quant', (data[2]));
+		io.emit('stock', (data[3]));
+
 		});
+
+	socket.on('removeAll', function () {
+		commande = removeAll(commande,jso);
+		io.emit('panier',getPanier(commande,jso));
+		io.emit('total',totalCost(commande,jso));
+		});
+		socket.on('buyAll', function () {
+			jso = buyPanier(jso,commande);
+			commande = removeAll(commande,jso);
+			var data = getDataFromCompteur(compteur,jso);
+			io.emit('stock', (data[3]));
+			io.emit('panier',getPanier(commande,jso));
+			io.emit('total',totalCost(commande,jso));
+			});
 });
 
 function getListName(json) {
@@ -78,6 +98,9 @@ function getQuantFromCompteur(nb,json){
 function getPrixFromCompteur(nb,json){
 	return json.produit[nb].prix;
 }
+function getStockFromCompteur(nb,json){
+	return json.produit[nb].stock;
+}
 function changeCompteur(i,nb,json){
 	nb += i;
 	if (nb< 0){
@@ -94,6 +117,8 @@ function getDataFromCompteur(nb,json){
 	list[0] = getNameFromCompteur(nb,json);
 	list[1] = getPrixFromCompteur(nb,json);
 	list[2] = getQuantFromCompteur(nb,json);
+	list[3] = getStockFromCompteur(nb,json);
+
 	return list;
 }
 function creationCommande(json){
@@ -105,11 +130,12 @@ function creationCommande(json){
 }
 
 function addProduct(nb,com,json){
+	if (getStockFromCompteur(nb,json)>com[getNameFromCompteur(nb,json)]+1)
 	com[getNameFromCompteur(nb,json)] += 1;
 	return com;
 }
 function removeProduct(nb,com,json){
-	if (com[getNameFromCompteur(nb,json)] > 1){
+	if (com[getNameFromCompteur(nb,json)] > 0){
 		com[getNameFromCompteur(nb,json)] -= 1;
 	}
 	return com;
@@ -143,7 +169,6 @@ function totalCost(com,json){
    if (com[name] > 0 ) {
 		 prix += (com[name] * json.produit[getCompteurFromName(name,json)].prix);
 		 poidsTotal += (com[name] * json.produit[getCompteurFromName(name,json)].quant);
-		 console.log(poidsTotal);
 }}
 	if (poidsTotal < 20000){
 		var livraison = 20;
@@ -159,4 +184,17 @@ function totalCost(com,json){
 	}else {
 		return "";
 	}
+}
+function buyPanier(json,commande){
+	let newJson = json;
+	for (var i = 0; i < newJson.produit.length; i++) {
+		console.log(newJson.produit[i].stock +"-="+ commande[newJson.produit[i].name]);
+		newJson.produit[i].stock -= commande[newJson.produit[i].name];
+	}
+let data = JSON.stringify(newJson, null, 2);
+	fs.writeFile('produit.json', data, (err) => {
+    if (err) throw err;
+    console.log('Data written to file');
+});
+	return newJson;
 }

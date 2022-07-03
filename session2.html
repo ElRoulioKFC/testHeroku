@@ -10,12 +10,16 @@
         <div id="nom"></div>
         <div id="prix"></div>
         <div id="quant"></div>
+        <div id="stock"></div>
+
 
         <button id="plus"> + </button>
         <button id="minus"> - </button>
 
         <div id="panier"></div>
         <div id="total"></div>
+        <button id="supp"> supprimer le panier </button>
+        <button id="buy"> acheter </button>
 
 
        <script src="/socket.io/socket.io.js"></script>
@@ -36,7 +40,12 @@
           document.getElementById('minus').onclick = function() {
             socket.emit('minus');
           };
-
+          document.getElementById('supp').onclick = function() {
+            socket.emit('removeAll');
+          };
+          document.getElementById('buy').onclick = function() {
+            socket.emit('buyAll');
+          };
 
           socket.on('total', function (msg) {
             document.getElementById('total').innerText = msg;
@@ -54,6 +63,12 @@
           });
           socket.on('quant', function (msg) {
             document.getElementById('quant').innerText = msg + ' g';
+          });
+          socket.on('quant', function (msg) {
+            document.getElementById('quant').innerText = msg + ' g';
+          });
+          socket.on('stock', function (msg) {
+            document.getElementById('stock').innerText = msg ;
           });
 		</script>
     </body>
